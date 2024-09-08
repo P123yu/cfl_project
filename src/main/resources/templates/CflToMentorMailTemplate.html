@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Regarding Mentor-Mentee Meeting</title>
+    <style>
+        .email-container {
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        .header {
+            background-color: #f4f4f4;
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        .content {
+            margin: 20px 0;
+        }
+        .footer {
+            background-color: #f4f4f4;
+            padding: 10px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            font-size: 0.8em;
+            color: #666;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        td:first-child {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">
+        <h1>Regarding Mentor-Mentee Meeting</h1>
+    </div>
+    <div class="content">
+        <p>CFL's Details,</p>
+        <table>
+            <tr>
+                <td>Cfl Id:</td>
+                <td><span th:text="${cflId}"></span></td>
+            </tr>
+            <tr>
+                <td>Cfl Name:</td>
+                <td><span th:text="${cflName}"></span></td>
+            </tr>
+            <tr>
+                <td>Cfl Email:</td>
+                <td><span th:text="${cflEmail}"></span></td>
+            </tr>
+        </table>
+        <p>Respected Sir/Madam,</p>
+        <p th:text="${body}">[Body Content]</p>
+        <p>Thanks</p>
+        <p>CMS CFL Team <span th:text="${year}"></span></p>
+
+    </div>
+    <div class="footer">
+        <p th:text="'&copy; ' + ${year} + ' CMS. All rights reserved.'"></p>
+    </div>
+</div>
+</body>
+</html>
