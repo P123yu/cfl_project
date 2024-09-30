@@ -30,12 +30,14 @@ public class Mentor {
     private String mentorDesignation;
     private String mentorFileName;
 
+//    @Lob
+//    @Column(name = "mentor_file_data", columnDefinition = "LONGBLOB", nullable = false)
+//    private byte[] mentorFileData;
+
+
     @Lob
-    @Column(name = "mentor_file_data", columnDefinition = "LONGBLOB", nullable = false)
+    @Column(name = "mentor_file_data", columnDefinition = "BYTEA", nullable = false)
     private byte[] mentorFileData;
 
-//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    @JoinColumn(name = "mentor_id", referencedColumnName = "mentorId")
-//    private Set<Cfl> address = new HashSet<>();
 
 }

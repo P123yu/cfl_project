@@ -19,12 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.util.List;
-
-// import static com.refreshTokenSecurity.model.Role.MANAGER;
-//import static com.refreshTokenSecurity.model.Role.USER;
-
 
 @Configuration
 public class SpringSecurityConfig {
@@ -39,9 +34,14 @@ public class SpringSecurityConfig {
         return httpSecurity.cors(cors->cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(req -> req
-                                .requestMatchers("register","login","getMail/{userName}","mentor/**","cfl/**").permitAll()
-//                        .requestMatchers("manager/**").hasRole(MANAGER.name())
-//                       .requestMatchers("login/**").hasRole(USER.name())
+                                .requestMatchers("register","login","getMail/{userName}",
+                                        "mentor/**","cfl/**","refresh/**",
+                                        "jwtWithRefreshToken/**","accept/**","Goals/**","cflSkill/**",
+                                        "logbook/**","manager/**","managerRating/**","certificate/**",
+                                        "menteeToMentorFeedBack/**","goalSettingTracker/**","probationTracker/**",
+                                "questionRadio/**","memories/**","resume/**","videos/**","cflRoles/**",
+                                "rewardsAndRecognition/**","probationConfirmation/**","mentorToMenteeFeedBack/**"
+                                ,"managerToCflFeedBack/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -3,6 +3,7 @@ package com.cfl.cfl_project.service.impl;
 
 import com.cfl.cfl_project.jwt.JwtTokenGenerator;
 import com.cfl.cfl_project.model.Login;
+import com.cfl.cfl_project.model.Refresh;
 import com.cfl.cfl_project.model.Register;
 import com.cfl.cfl_project.repository.RegisterRepository;
 import com.cfl.cfl_project.service.AuthenticationAndAuthorizationService;
@@ -25,9 +26,9 @@ public class AuthenticationAndAuthorizationServiceImpl implements Authentication
 
     @Autowired
     private JwtTokenGenerator jwtTokenGenerator;
-//
-//    @Autowired
-//    private RefreshServiceImpl refreshServiceImpl;
+
+    @Autowired
+    private RefreshServiceImpl refreshServiceImpl;
 
     @Override
     public String register(Register register) {
@@ -36,7 +37,7 @@ public class AuthenticationAndAuthorizationServiceImpl implements Authentication
 
         Register newRegister=registerRepository.save(register);
         System.out.println(newRegister.getRole().toString());
-//        refreshServiceImpl.createRefreshToken(newRegister.getUsername());
+        refreshServiceImpl.createRefreshToken(newRegister.getUsername());
 
 
         // this line generate JWT Token
@@ -67,6 +68,16 @@ public class AuthenticationAndAuthorizationServiceImpl implements Authentication
     public Boolean isValidEmail(String username) {
         return registerRepository.existsByUserName(username);
     }
+
+
+    @Override
+    public String refreshToken(String userName) {
+        Register register = registerRepository.findByUserName(userName);
+        Refresh refresh = register.getRefresh();
+        System.out.println(refresh.getRefreshToken());
+        return refresh.getRefreshToken();
+    }
+
 
 
 }

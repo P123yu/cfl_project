@@ -16,4 +16,7 @@ public interface AuthenticationAndAuthorizationService {
 
     // find info By username
     Boolean isValidEmail(String username);
+
+    // generate jwt By UserName
+    String refreshToken(String userName);
 }

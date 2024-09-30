@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Regarding Mentor-Mentee Meeting</title>
+    <style>
+        .email-container {
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            margin: 20px;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .header {
+            background-color: #f4f4f4;
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        .content {
+            margin: 20px 0;
+        }
+        .footer {
+            background-color: #f4f4f4;
+            padding: 10px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        td:first-child {
+            font-weight: bold;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: white;
+            background-color: wheat;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: center;
+            margin: 0 10px; /* Add gap between buttons */
+        }
+        .button.extend {
+            background-color: rgb(197, 200, 205); /* Different color for Extend button */
+        }
+        .button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">
+        <h1>Regarding Mentor-Mentee Meeting</h1>
+    </div>
+    <div class="content">
+        <p>Employee Details</p>
+        <table>
+            <tr>
+                <td>Employee Name:</td>
+                <td><span th:text="${cflName}"></span></td>
+            </tr>
+            <tr>
+                <td>Employee Mail:</td>
+                <td><span th:text="${cflEmail}"></span></td>
+            </tr>
+            <tr>
+                <td>Designation:</td>
+                <td><span th:text="${cflDesignation}"></span></td>
+            </tr>
+            <tr>
+                <td>Department:</td>
+                <td><span th:text="${cflDepartment}"></span></td>
+            </tr>
+            <tr>
+                <td>Location:</td>
+                <td><span th:text="${cflLocation}"></span></td>
+            </tr>
+            <tr>
+                <td>Reporting Manager:</td>
+                <td><span th:text="${reportingManager}"></span></td>
+            </tr>
+        </table>
+        <p>Respected <p th:text="${type}"></p></p>
+        <p th:text="${body}">[Body Content]</p>
+
+        <p>Calendly Link to Schedule Event: <a th:href="${link}" th:text="${link}"></a></p>
+
+        <p>Thanks</p>
+        <p>CMS CFL Team <span th:text="${year}"></span></p>
+    </div>
+    <div class="footer">
+        <!-- Correctly displaying the copyright symbol and year -->
+        <p th:utext="'&copy; ' + ${year} + ' CMS. All rights reserved.'"></p>
+    </div>
+</div>
+</body>
+</html>

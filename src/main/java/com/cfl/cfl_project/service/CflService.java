@@ -14,75 +14,66 @@ import java.util.List;
 @Service
 public interface CflService {
 
-    Cfl createCfl(Long empId,
-                  String cflFirstName,
-                  String cflMiddleName,
-                  String cflLastName,
-                  String cflEmail,
-                  String cflDepartment,
-                  String cflDesignation,
-                  String reportingManager,
-                  String cflLocation,
-                  String joiningDate,
-                  String sscResult,
-                  String hscResult,
-                  String underGraduateResult,
-                  String postGraduateResult,
-                  String collegeName,
-                  String collegeBranch,
-                  String technicalSkills,
-                  String nonTechnicalSkills,
-                  MultipartFile file) throws IOException;
+//    Cfl createCfl(Long empId,
+//                  String cflFirstName,String cflMiddleName, String cflLastName, String cflEmail,
+//                  String cflDepartment, String cflDesignation, String reportingManager, String reportingManagerMail,
+//                  String hrMail, String cflLocation, String joiningDate, String sscResult,
+//                  String hscResult, String underGraduateResult, String postGraduateResult,
+//                  String collegeName, String collegeBranch, String technicalSkills,
+//                  String nonTechnicalSkills) throws IOException;
 
-//    Cfl getCflByEmpId(Long empId);
-//
-//    List<Cfl> getAllCfl();
-//
-//    Cfl updateCflById(Long id,
-//                      String cflFirstName,
-//                      String cflMiddleName,
-//                      String cflLastName,
-//                      String cflEmail,
-//                      String cflDepartment,
-//                      String cflDesignation,
-//                      String reportingManager,
-//                      String cflLocation,
-//                      LocalDate joiningDate,
-//                      String year,
-//                      String sscResult,
-//                      String hscResult,
-//                      String underGraduateResult,
-//                      String postGraduateResult,
-//                      String collegeName,
-//                      String collegeBranch,
-//                      String technicalSkills,
-//                      String nonTechnicalSkills,
-//                      MultipartFile file);
-//
-//    void deleteCflById(Long id);
-//
-//    List<Cfl> getAllByYear(String year);
-//
-//    Boolean sentMailToMentor(Long empId, String mentorEmail,String subject,String message);
-//
-//    List<MailHistory>getByMailHistoryByEmpId(Long empId);
-//
-//
-//
-//    List<Cfl> createMentor(Long mentorId,
-//                     String empId,
-//                  String mentorName,
-//                  String mentorEmail,
-//                  String mentorDepartment,
-//                  String mentorLocation,
-//                  String mentorDesignation, MultipartFile mentorFile);
-//
-//
-//    List<Cfl> getByMentorId(Long mentorId);
-//
-//    Boolean sendLinkToMultipleRecipients(String recipientEmails, String subject, String link) ;
-//
-//
-//
+    List<Cfl>getAllCfl();
 
-    }
+    Cfl uploadCflImage(Long empId,MultipartFile file) throws IOException;
+
+    Cfl getParticularCflByEmpId(Long empId);
+
+    Cfl createCfl(Cfl cfl);
+
+    List<Cfl> createListOfCfl(List<Cfl> list);
+
+    List<Cfl> getAllByYear(String year);
+
+
+
+    Boolean sentMailToMentor(Long empId, String email,String ccEmail,String subject,String message,String type);
+
+    List<MailHistory>getByMailHistoryByEmpId(Long empId);
+
+    Cfl getByCflEmail(String cflEmail);
+
+    Cfl getByCflDeclinedEmail(String cflEmail);
+
+    // list of cfl based on manager email
+    List<Cfl> getAllByManagerEmail(String managerEmail);
+    Cfl getCflByEmpId(Long empId);
+
+    // fetch cfl data while cfl login via email
+    Cfl getCflByEmailDuringLogin(String cflEmail);
+
+
+    // Goal Setting Request ----------------------------------------------
+//    // send automate mail request to manager
+    void sendMailToManagerRegardingGoalSetting();
+
+    // send automate accept mail request to manager
+    void sendMailFromManagerToCFLAndHr(String cflEmail);
+
+    // send automate extend mail request to manager
+    void sendExtendMailFromManagerToCFLAndHr(String cflEmail);
+
+
+    // probation Request ----------------------------------------------------
+
+    // send automate probation mail request to manager
+    void sendMailToManagerRegardingProbation();
+
+    // send automate probation accept mail request to manager
+    void sendProbationMailFromManagerToCFLAndHr(String cflEmail);
+
+    // send automate probation extend mail request to manager
+    void sendProbationExtendMailFromManagerToCFLAndHr(String cflEmail);
+
+//    // count cfl
+//    void sendManagerWiseCflCount(Boolean status);
+}

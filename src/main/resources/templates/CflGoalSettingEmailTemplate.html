@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Goal Setting Confirmation Request</title>
+    <style>
+        .email-container {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+        }
+        .email-header {
+            background-color: #4CAF50;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+        .email-body {
+            padding: 20px;
+        }
+        .email-footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #777777;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            font-size: 16px;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn-accept {
+            background-color: #4CAF50; /* Green */
+        }
+        .btn-extend {
+            background-color: #FF0000; /* Red */
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="email-header">
+        <h2>Goal Setting Confirmation Request</h2>
+        <span th:text="${subject}"></span>
+    </div>
+    <div class="email-body">
+        <p>Dear Manager,</p>
+        <p>We would like to inform you that CFL <span th:text="${cflName}"></span> is from your team</p>
+        <p>Emp EMail <span th:text="${cflEmail}"></span></p>
+        <p>HR Email <span th:text="${hrEmail}"></span></p>
+        <p>As part of the goal-setting process, we kindly request you to discuss the goals with HR and CFL.</p>
+        <p>Please confirm your action by selecting one of the options below:</p>
+
+        <a th:href="@{'http://localhost:8080/cfl/manager/accept/' + ${cflEmail}}" class="btn btn-accept">Accept</a>
+        <a th:href="@{'http://localhost:8080/cfl/manager/extend/' + ${cflEmail}}" class="btn btn-extend">Extend</a>
+        <p>Calendly Link to Schedule Event: <a th:href="${link}" th:text="${link}"></a></p>
+        <p>Best Regards,<br/>HR Department</p>
+    </div>
+    <div class="email-footer">
+        <p>&copy; CMS COMPUTERS . All rights reserved.</p>
+    </div>
+</div>
+</body>
+</html>

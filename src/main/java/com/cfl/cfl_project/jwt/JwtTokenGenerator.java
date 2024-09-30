@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.Collection;
 import java.util.function.Function;
@@ -23,12 +25,14 @@ public class JwtTokenGenerator {
 
     // generate Jwt Token
 
-    public String generateToken(UserDetails user){
-        return Jwts.builder().subject(user.getUsername())  // mohit
-                .claim("authorities",getAuthorities(user.getAuthorities()))  // role_mgr,role_usr
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+ 3*24*60*60*1000))
-                .signWith(getKey(), SignatureAlgorithm.HS256).compact();
+    public String generateToken(UserDetails user) {
+        return Jwts.builder()
+                .setSubject(user.getUsername())
+                .claim("authorities", getAuthorities(user.getAuthorities()))
+                .setIssuedAt(Date.from(Instant.now()))  // Current time
+                .setExpiration(Date.from(Instant.now().plus(90, ChronoUnit.DAYS)))
+                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
 

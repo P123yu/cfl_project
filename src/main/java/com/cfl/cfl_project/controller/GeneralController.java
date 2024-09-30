@@ -1,8 +1,11 @@
 package com.cfl.cfl_project.controller;
 
+import com.cfl.cfl_project.jwt.JwtTokenGenerator;
 import com.cfl.cfl_project.model.Login;
+import com.cfl.cfl_project.model.Refresh;
 import com.cfl.cfl_project.model.Register;
 import com.cfl.cfl_project.service.AuthenticationAndAuthorizationService;
+import com.cfl.cfl_project.service.impl.RefreshServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,4 +61,40 @@ public class GeneralController {
             return ResponseEntity.ok(false);
         }
     }
+
+
+    @GetMapping("/jwtWithRefreshToken/{userName}")
+    public ResponseEntity<?> refreshToken(@PathVariable String userName) {
+        String jwtWithRefreshToken=authenticationAndAuthorizationService.refreshToken(userName);
+        if(jwtWithRefreshToken.length()==0) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("not refresh token");
+        }
+        else{
+            return ResponseEntity.ok(jwtWithRefreshToken);
+        }
+
+    }
+
+
+
+    @Autowired
+    private RefreshServiceImpl refreshServiceImpl;
+
+    @Autowired
+    private JwtTokenGenerator jwtTokenGenerator;
+
+    // refreshToken
+    @PostMapping("/refresh/{refreshToken}")
+    public  String generateTokenBasedOnRefreshToken(@PathVariable String refreshToken) {
+        Refresh refresh=refreshServiceImpl.verifyRefreshToken(refreshToken);
+        Register register=refresh.getRegister();
+        String jwtToken=jwtTokenGenerator.generateToken(register);
+        return jwtToken;
+    }
+
+
+
+
+
+
 }

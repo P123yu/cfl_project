@@ -1,6 +1,8 @@
 package com.cfl.cfl_project.controller;
 
+import com.cfl.cfl_project.model.Cfl;
 import com.cfl.cfl_project.model.Mentor;
+import com.cfl.cfl_project.model.MentorResponse;
 import com.cfl.cfl_project.service.MentorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/mentor")
@@ -68,4 +71,28 @@ public class MentorController {
     }
 
 
+    @GetMapping("/{mentorEmail}")
+    public ResponseEntity<?> getMentorByEmail(@PathVariable("mentorEmail") String mentorEmail){
+        System.out.println(mentorEmail+"mentorEmail...");
+       MentorResponse mentorResponse= mentorService.getMentorByMentorMail(mentorEmail);
+       if(mentorResponse !=null){
+           return ResponseEntity.ok(mentorResponse);
+       }
+       else{
+           return ResponseEntity.status(500).body("mentor Response not found");
+       }
+    }
+
+
+    // filter by mentor email
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getAll(){
+        List<String> mentorResponse=mentorService.getAll();
+        if(!mentorResponse.isEmpty()){
+            return ResponseEntity.ok(mentorResponse);
+        }
+        else{
+            return ResponseEntity.status(500).body("Mentor Response not found");
+        }
+    }
 }

@@ -25,4 +25,5 @@ public class MailHistory {
     private Long empId;
     private LocalDate mailDate;
     private LocalTime mailTime;
+
 }
