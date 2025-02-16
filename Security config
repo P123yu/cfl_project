@@ -1,0 +1,650 @@
+////package com.cfl.cfl_project.config;
+////
+////import com.cfl.cfl_project.jwt.JwtFilter;
+////
+////import com.cfl.cfl_project.service.impl.UserDetailsServiceImpl;
+////import org.springframework.beans.factory.annotation.Autowired;
+////import org.springframework.context.annotation.Bean;
+////import org.springframework.context.annotation.Configuration;
+////import org.springframework.security.authentication.AuthenticationManager;
+////import org.springframework.security.authentication.AuthenticationProvider;
+////import org.springframework.security.authentication.ProviderManager;
+////import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+////import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+////import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+////import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+////import org.springframework.security.config.http.SessionCreationPolicy;
+////import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+////import org.springframework.security.crypto.password.PasswordEncoder;
+////import org.springframework.security.web.SecurityFilterChain;
+////import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+////import org.springframework.web.cors.CorsConfiguration;
+////import org.springframework.web.cors.CorsConfigurationSource;
+////import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+////import java.util.List;
+////
+////@Configuration
+////public class SpringSecurityConfig {
+////
+////    // step 1
+////
+////    @Autowired
+////    private JwtFilter jwtFilter;
+////
+////
+////
+////    @Bean
+////    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
+////        return httpSecurity.cors(cors->cors.configurationSource(corsConfigurationSource()))
+////                .csrf(csrf -> csrf.disable())
+////                .authorizeHttpRequests(req -> req
+//////                                .requestMatchers("register","login","getMail/{userName}",
+//////                                        "jwtWithRefreshToken/{userName}",
+//////                                        "register/mentor/**","register/manager/**","register/hr/**","getRegisterStatus/{userName}",
+//////                                        "/createNewPassword","mentor/**","hr/**","cfl/**","refresh/**","cfl/**/**","cfl/**/**/**",
+//////                                        "updatePassword/**","jwtWithRefreshToken/**","accept/**","Goals/**","cflSkill/**",
+//////                                        "logbook/**","manager/**","managerRating/**","question-answer/**","certificate/**",
+//////                                        "menteeToMentorFeedBack/**","goalSettingTracker/**","probationTracker/**",
+//////                                "questionRadio/**","memories/**","resume/**","videos/**","cflRoles/**","cflRoles/getByYear/**",
+//////                                "rewardsAndRecognition/**","probationConfirmation/**","mentorToMenteeFeedBack/**"
+//////                                ,"managerToCflFeedBack/**","user-manual/**").permitAll()
+//////                                //.hasRole(String.valueOf(Role.MANAGER))
+//////                        .requestMatchers("login").permitAll()
+////
+////                                .requestMatchers("register","login","getMail/{userName}",
+////                                        "jwtWithRefreshToken/{userName}",
+////                                        "register/mentor/**","register/manager/**","register/hr/**","getRegisterStatus/{userName}",
+////                                        "/createNewPassword","mentor/**","hr/**","cfl/**","refresh/**",
+////                                        "updatePassword/**","jwtWithRefreshToken/**","accept/**","Goals/**","cflSkill/**",
+////                                        "logbook/**","manager/**","managerRating/**","question-answer/**","certificate/**",
+////                                        "menteeToMentorFeedBack/**","goalSettingTracker/**","probationTracker/**",
+////                                        "questionRadio/**","memories/**","resume/**","videos/**","cflRoles/**","cflRoles/getByYear/**",
+////                                        "rewardsAndRecognition/**","probationConfirmation/**","mentorToMenteeFeedBack/**"
+////                                        ,"managerToCflFeedBack/**","user-manual/**").permitAll()
+////
+////                                .anyRequest().authenticated()
+////                )
+////                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+////                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+////                .build();
+////    }
+////
+////
+//////
+//////    @Bean
+//////    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
+//////        return httpSecurity
+//////                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS with custom configuration
+//////                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
+//////                .authorizeHttpRequests(req -> req
+//////
+//////                        // Protected endpoints requiring specific roles for certificate
+//////                        .requestMatchers("certificate/upload").hasRole("CFL")
+//////                        .requestMatchers("certificate/download/{empId}").hasAnyRole("HR","MANAGER")
+//////
+//////                        // Protected endpoints requiring specific roles for resume
+//////                        .requestMatchers("resume/upload").hasRole("CFL")
+//////                        .requestMatchers("resume/download/{empId}").hasAnyRole("HR","MANAGER")
+//////
+//////                        // Protected endpoints requiring specific roles for logbook
+//////                        .requestMatchers("logbook/upload").hasRole("CFL")
+//////                        .requestMatchers("logbook/download/{empId}").hasAnyRole("HR","MANAGER")
+//////
+//////                        // Protected endpoints requiring specific roles for request cfl
+//////                        .requestMatchers("cfl/getCflInfoDuringLogin/{cflEmail}","menteeToMentorFeedBack/create","cfl/sendMail","cfl/getByMailHistoryByEmpId/{empId}"
+//////                                ,"cfl/getParticularCflByEmpId/{empId}","Goals/thirty-days-goals/emp/{empId}"
+//////                        ,"Goals/sixty-days-goals/emp/{empId}","Goals/ninety-days-goals/emp/{empId}"
+//////                        ).hasRole("CFL")
+//////
+//////                        // Protected endpoints requiring specific roles for request hr
+//////                                .requestMatchers("register/hr","register/mentor","register/manager","cfl/createAll","memories/post/{year}","videos/create").hasRole("HR")
+//////
+//////                        // Protected endpoints requiring specific roles for request mentor
+//////                        .requestMatchers("mentorToMenteeFeedBack/create","mentor/create","mentor/uploadMentorFile").hasRole("MENTOR")
+//////
+//////                                // All other requests not need authentication
+//////                        .anyRequest().permitAll()
+//////                )
+//////                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless sessions
+//////                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT filter before UsernamePasswordAuthenticationFilter
+//////                .build();
+//////    }
+////
+////    // convert plain text password into Bcryptpassword
+////
+////    @Bean
+////    public PasswordEncoder passwordEncoder(){
+////        return new BCryptPasswordEncoder();
+////    }
+////
+////
+////    // step 4
+////    @Bean
+////    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+////        //return authenticationConfiguration.getAuthenticationManager();
+////        return new ProviderManager(authenticationProvider());
+////    }
+////
+////
+////    @Autowired
+////    private UserDetailsServiceImpl userDetailsServiceImpl;
+////
+////
+////    // step 5
+////    @Bean
+////    AuthenticationProvider authenticationProvider(){
+////        DaoAuthenticationProvider daoAuthenticationProvider=new DaoAuthenticationProvider();
+////
+////        // this line is searching the row based on username or useremail in db
+////
+////        // here setUserDetailsService this require UserDetailsService return type
+////        daoAuthenticationProvider.setUserDetailsService(userDetailsServiceImpl);
+////
+////        // this line is taking password which we enter during login and encode that password
+////        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+////        return daoAuthenticationProvider;
+////
+////    }
+////
+////
+////    @Bean
+////    CorsConfigurationSource corsConfigurationSource(){
+////        CorsConfiguration corsConfiguration=new CorsConfiguration();
+////        corsConfiguration.addAllowedHeader("*");
+////        corsConfiguration.addAllowedMethod("*");
+////        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+////        corsConfiguration.setAllowCredentials(true);
+////
+////        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource=new UrlBasedCorsConfigurationSource();
+////        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**",corsConfiguration);
+////        return urlBasedCorsConfigurationSource;
+////    }
+////}
+//
+//
+//
+//package com.cfl.cfl_project.config;
+//
+//import com.cfl.cfl_project.jwt.JwtFilter;
+//
+//import com.cfl.cfl_project.service.impl.UserDetailsServiceImpl;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.security.authentication.AuthenticationManager;
+//import org.springframework.security.authentication.AuthenticationProvider;
+//import org.springframework.security.authentication.ProviderManager;
+//import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+//import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+//import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+//import org.springframework.security.config.http.SessionCreationPolicy;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.security.web.SecurityFilterChain;
+//import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+//import org.springframework.web.cors.CorsConfiguration;
+//import org.springframework.web.cors.CorsConfigurationSource;
+//import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+//import java.util.List;
+//
+//@Configuration
+//public class SpringSecurityConfig {
+//
+//    // step 1
+//
+//    @Autowired
+//    private JwtFilter jwtFilter;
+//
+//
+//
+//    @Bean
+//    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
+//        return httpSecurity.cors(cors->cors.configurationSource(corsConfigurationSource()))
+//                .csrf(csrf -> csrf.disable())
+//                .authorizeHttpRequests(req -> req
+////                                .requestMatchers("register","login","getMail/{userName}",
+////                                        "jwtWithRefreshToken/{userName}",
+////                                        "register/mentor/**","register/manager/**","register/hr/**","getRegisterStatus/{userName}",
+////                                        "/createNewPassword","mentor/**","hr/**","cfl/**","refresh/**","cfl/**/**","cfl/**/**/**",
+////                                        "updatePassword/**","jwtWithRefreshToken/**","accept/**","Goals/**","cflSkill/**",
+////                                        "logbook/**","manager/**","managerRating/**","question-answer/**","certificate/**",
+////                                        "menteeToMentorFeedBack/**","goalSettingTracker/**","probationTracker/**",
+////                                "questionRadio/**","memories/**","resume/**","videos/**","cflRoles/**","cflRoles/getByYear/**",
+////                                "rewardsAndRecognition/**","probationConfirmation/**","mentorToMenteeFeedBack/**"
+////                                ,"managerToCflFeedBack/**","user-manual/**").permitAll()
+////                                //.hasRole(String.valueOf(Role.MANAGER))
+////                        .requestMatchers("login").permitAll()
+////
+////                                .requestMatchers("register","login","getMail/{userName}",
+////                                        "jwtWithRefreshToken/{userName}","register/**/**","register/**",
+////                                        "register/mentor/**","register/manager/**","register/hr/**","getRegisterStatus/{userName}",
+////                                        "/createNewPassword","mentor/**","hr/**","cfl/**","refresh/**","cfl/**/**","cfl/getAllByYear/**",
+////                                        "updatePassword/**","jwtWithRefreshToken/**","accept/**","Goals/**","cflSkill/**",
+////                                        "logbook/**","manager/**","managerRating/**","question-answer/**","certificate/**",
+////                                        "menteeToMentorFeedBack/**","goalSettingTracker/**","probationTracker/**",
+////                                        "questionRadio/**","memories/**","resume/**","videos/**","cflRoles/**","cflRoles/getByYear/**",
+////                                        "rewardsAndRecognition/**","probationConfirmation/**","mentorToMenteeFeedBack/**"
+////                                        ,"managerToCflFeedBack/**","user-manual/**").permitAll()
+//
+//                                .anyRequest().permitAll()
+//
+//                                //.anyRequest().authenticated()
+//                )
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+//                .build();
+//    }
+//
+//
+////
+////    @Bean
+////    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
+////        return httpSecurity
+////                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS with custom configuration
+////                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
+////                .authorizeHttpRequests(req -> req
+////
+////                        // Protected endpoints requiring specific roles for certificate
+////                        .requestMatchers("certificate/upload").hasRole("CFL")
+////                        .requestMatchers("certificate/download/{empId}").hasAnyRole("HR","MANAGER")
+////
+////                        // Protected endpoints requiring specific roles for resume
+////                        .requestMatchers("resume/upload").hasRole("CFL")
+////                        .requestMatchers("resume/download/{empId}").hasAnyRole("HR","MANAGER")
+////
+////                        // Protected endpoints requiring specific roles for logbook
+////                        .requestMatchers("logbook/upload").hasRole("CFL")
+////                        .requestMatchers("logbook/download/{empId}").hasAnyRole("HR","MANAGER")
+////
+////                        // Protected endpoints requiring specific roles for request cfl
+////                        .requestMatchers("cfl/getCflInfoDuringLogin/{cflEmail}","menteeToMentorFeedBack/create","cfl/sendMail","cfl/getByMailHistoryByEmpId/{empId}"
+////                                ,"cfl/getParticularCflByEmpId/{empId}","Goals/thirty-days-goals/emp/{empId}"
+////                        ,"Goals/sixty-days-goals/emp/{empId}","Goals/ninety-days-goals/emp/{empId}"
+////                        ).hasRole("CFL")
+////
+////                        // Protected endpoints requiring specific roles for request hr
+////                                .requestMatchers("register/hr","register/mentor","register/manager","cfl/createAll","memories/post/{year}","videos/create").hasRole("HR")
+////
+////                        // Protected endpoints requiring specific roles for request mentor
+////                        .requestMatchers("mentorToMenteeFeedBack/create","mentor/create","mentor/uploadMentorFile").hasRole("MENTOR")
+////
+////                                // All other requests not need authentication
+////                        .anyRequest().permitAll()
+////                )
+////                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless sessions
+////                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT filter before UsernamePasswordAuthenticationFilter
+////                .build();
+////    }
+//
+//    // convert plain text password into Bcryptpassword
+//
+//    @Bean
+//    public PasswordEncoder passwordEncoder(){
+//        return new BCryptPasswordEncoder();
+//    }
+//
+//
+//    // step 4
+//    @Bean
+//    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+//        //return authenticationConfiguration.getAuthenticationManager();
+//        return new ProviderManager(authenticationProvider());
+//    }
+//
+//
+//    @Autowired
+//    private UserDetailsServiceImpl userDetailsServiceImpl;
+//
+//
+//    // step 5
+//    @Bean
+//    AuthenticationProvider authenticationProvider(){
+//        DaoAuthenticationProvider daoAuthenticationProvider=new DaoAuthenticationProvider();
+//
+//        // this line is searching the row based on username or useremail in db
+//
+//        // here setUserDetailsService this require UserDetailsService return type
+//        daoAuthenticationProvider.setUserDetailsService(userDetailsServiceImpl);
+//
+//        // this line is taking password which we enter during login and encode that password
+//        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+//        return daoAuthenticationProvider;
+//
+//    }
+//
+//
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration corsConfiguration = new CorsConfiguration();
+//        corsConfiguration.setAllowCredentials(true);
+//        corsConfiguration.setAllowedOrigins(List.of(
+//                "http://localhost:3001",
+//                "http://localhost:3000",
+//                "http://43.204.42.69:9049",
+//                "http://localhost:8888",
+//                "http://localhost"
+//        ));
+//        corsConfiguration.addAllowedMethod("*");  // Allow all HTTP methods (GET, POST, etc.)
+//        corsConfiguration.addAllowedHeader("*");  // Allow all headers
+//        corsConfiguration.setMaxAge(3600L);  // Cache the CORS configuration for 3600 seconds
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", corsConfiguration);
+//        return source;
+//    }
+//
+//}
+
+
+//package com.cfl.cfl_project.config;
+//
+//import com.cfl.cfl_project.jwt.JwtFilter;
+//
+//import com.cfl.cfl_project.service.impl.UserDetailsServiceImpl;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.security.authentication.AuthenticationManager;
+//import org.springframework.security.authentication.AuthenticationProvider;
+//import org.springframework.security.authentication.ProviderManager;
+//import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+//import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+//import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+//import org.springframework.security.config.http.SessionCreationPolicy;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.security.web.SecurityFilterChain;
+//import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+//import org.springframework.web.cors.CorsConfiguration;
+//import org.springframework.web.cors.CorsConfigurationSource;
+//import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+//import java.util.List;
+//
+//@Configuration
+//public class SpringSecurityConfig {
+//
+//    // step 1
+//
+//    @Autowired
+//    private JwtFilter jwtFilter;
+//
+//
+//
+//    @Bean
+//    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
+//        return httpSecurity.cors(cors->cors.configurationSource(corsConfigurationSource()))
+//                .csrf(csrf -> csrf.disable())
+//                .authorizeHttpRequests(req -> req
+////                                .requestMatchers("register","login","getMail/{userName}",
+////                                        "jwtWithRefreshToken/{userName}",
+////                                        "register/mentor/**","register/manager/**","register/hr/**","getRegisterStatus/{userName}",
+////                                        "/createNewPassword","mentor/**","hr/**","cfl/**","refresh/**","cfl/**/**","cfl/**/**/**",
+////                                        "updatePassword/**","jwtWithRefreshToken/**","accept/**","Goals/**","cflSkill/**",
+////                                        "logbook/**","manager/**","managerRating/**","question-answer/**","certificate/**",
+////                                        "menteeToMentorFeedBack/**","goalSettingTracker/**","probationTracker/**",
+////                                "questionRadio/**","memories/**","resume/**","videos/**","cflRoles/**","cflRoles/getByYear/**",
+////                                "rewardsAndRecognition/**","probationConfirmation/**","mentorToMenteeFeedBack/**"
+////                                ,"managerToCflFeedBack/**","user-manual/**").permitAll()
+////                                //.hasRole(String.valueOf(Role.MANAGER))
+////                        .requestMatchers("login").permitAll()
+//
+//                                .requestMatchers("register","login","getMail/{userName}",
+//                                        "jwtWithRefreshToken/{userName}",
+//                                        "register/mentor/**","register/manager/**","register/hr/**","getRegisterStatus/{userName}",
+//                                        "/createNewPassword","mentor/**","hr/**","cfl/**","refresh/**",
+//                                        "updatePassword/**","jwtWithRefreshToken/**","accept/**","Goals/**","cflSkill/**",
+//                                        "logbook/**","manager/**","managerRating/**","question-answer/**","certificate/**",
+//                                        "menteeToMentorFeedBack/**","goalSettingTracker/**","probationTracker/**",
+//                                        "questionRadio/**","memories/**","resume/**","videos/**","cflRoles/**","cflRoles/getByYear/**",
+//                                        "rewardsAndRecognition/**","probationConfirmation/**","mentorToMenteeFeedBack/**"
+//                                        ,"managerToCflFeedBack/**","user-manual/**").permitAll()
+//
+//                                .anyRequest().authenticated()
+//                )
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+//                .build();
+//    }
+//
+//
+////
+////    @Bean
+////    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
+////        return httpSecurity
+////                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS with custom configuration
+////                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
+////                .authorizeHttpRequests(req -> req
+////
+////                        // Protected endpoints requiring specific roles for certificate
+////                        .requestMatchers("certificate/upload").hasRole("CFL")
+////                        .requestMatchers("certificate/download/{empId}").hasAnyRole("HR","MANAGER")
+////
+////                        // Protected endpoints requiring specific roles for resume
+////                        .requestMatchers("resume/upload").hasRole("CFL")
+////                        .requestMatchers("resume/download/{empId}").hasAnyRole("HR","MANAGER")
+////
+////                        // Protected endpoints requiring specific roles for logbook
+////                        .requestMatchers("logbook/upload").hasRole("CFL")
+////                        .requestMatchers("logbook/download/{empId}").hasAnyRole("HR","MANAGER")
+////
+////                        // Protected endpoints requiring specific roles for request cfl
+////                        .requestMatchers("cfl/getCflInfoDuringLogin/{cflEmail}","menteeToMentorFeedBack/create","cfl/sendMail","cfl/getByMailHistoryByEmpId/{empId}"
+////                                ,"cfl/getParticularCflByEmpId/{empId}","Goals/thirty-days-goals/emp/{empId}"
+////                        ,"Goals/sixty-days-goals/emp/{empId}","Goals/ninety-days-goals/emp/{empId}"
+////                        ).hasRole("CFL")
+////
+////                        // Protected endpoints requiring specific roles for request hr
+////                                .requestMatchers("register/hr","register/mentor","register/manager","cfl/createAll","memories/post/{year}","videos/create").hasRole("HR")
+////
+////                        // Protected endpoints requiring specific roles for request mentor
+////                        .requestMatchers("mentorToMenteeFeedBack/create","mentor/create","mentor/uploadMentorFile").hasRole("MENTOR")
+////
+////                                // All other requests not need authentication
+////                        .anyRequest().permitAll()
+////                )
+////                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless sessions
+////                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT filter before UsernamePasswordAuthenticationFilter
+////                .build();
+////    }
+//
+//    // convert plain text password into Bcryptpassword
+//
+//    @Bean
+//    public PasswordEncoder passwordEncoder(){
+//        return new BCryptPasswordEncoder();
+//    }
+//
+//
+//    // step 4
+//    @Bean
+//    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+//        //return authenticationConfiguration.getAuthenticationManager();
+//        return new ProviderManager(authenticationProvider());
+//    }
+//
+//
+//    @Autowired
+//    private UserDetailsServiceImpl userDetailsServiceImpl;
+//
+//
+//    // step 5
+//    @Bean
+//    AuthenticationProvider authenticationProvider(){
+//        DaoAuthenticationProvider daoAuthenticationProvider=new DaoAuthenticationProvider();
+//
+//        // this line is searching the row based on username or useremail in db
+//
+//        // here setUserDetailsService this require UserDetailsService return type
+//        daoAuthenticationProvider.setUserDetailsService(userDetailsServiceImpl);
+//
+//        // this line is taking password which we enter during login and encode that password
+//        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+//        return daoAuthenticationProvider;
+//
+//    }
+//
+//
+//    @Bean
+//    CorsConfigurationSource corsConfigurationSource(){
+//        CorsConfiguration corsConfiguration=new CorsConfiguration();
+//        corsConfiguration.addAllowedHeader("*");
+//        corsConfiguration.addAllowedMethod("*");
+//        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+//        corsConfiguration.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource=new UrlBasedCorsConfigurationSource();
+//        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**",corsConfiguration);
+//        return urlBasedCorsConfigurationSource;
+//    }
+//}
+
+
+
+package com.cfl.cfl_project.config;
+
+import com.cfl.cfl_project.jwt.JwtFilter;
+
+import com.cfl.cfl_project.service.impl.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.List;
+
+@Configuration
+public class SpringSecurityConfig {
+
+    // step 1
+
+    @Autowired
+    private JwtFilter jwtFilter;
+
+
+
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
+        return httpSecurity.cors(cors->cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(req -> req
+                                .anyRequest().permitAll()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
+
+
+//
+//    @Bean
+//    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
+//        return httpSecurity
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS with custom configuration
+//                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
+//                .authorizeHttpRequests(req -> req
+//
+//                        // Protected endpoints requiring specific roles for certificate
+//                        .requestMatchers("certificate/upload").hasRole("CFL")
+//                        .requestMatchers("certificate/download/{empId}").hasAnyRole("HR","MANAGER")
+//
+//                        // Protected endpoints requiring specific roles for resume
+//                        .requestMatchers("resume/upload").hasRole("CFL")
+//                        .requestMatchers("resume/download/{empId}").hasAnyRole("HR","MANAGER")
+//
+//                        // Protected endpoints requiring specific roles for logbook
+//                        .requestMatchers("logbook/upload").hasRole("CFL")
+//                        .requestMatchers("logbook/download/{empId}").hasAnyRole("HR","MANAGER")
+//
+//                        // Protected endpoints requiring specific roles for request cfl
+//                        .requestMatchers("cfl/getCflInfoDuringLogin/{cflEmail}","menteeToMentorFeedBack/create","cfl/sendMail","cfl/getByMailHistoryByEmpId/{empId}"
+//                                ,"cfl/getParticularCflByEmpId/{empId}","Goals/thirty-days-goals/emp/{empId}"
+//                        ,"Goals/sixty-days-goals/emp/{empId}","Goals/ninety-days-goals/emp/{empId}"
+//                        ).hasRole("CFL")
+//
+//                        // Protected endpoints requiring specific roles for request hr
+//                                .requestMatchers("register/hr","register/mentor","register/manager","cfl/createAll","memories/post/{year}","videos/create").hasRole("HR")
+//
+//                        // Protected endpoints requiring specific roles for request mentor
+//                        .requestMatchers("mentorToMenteeFeedBack/create","mentor/create","mentor/uploadMentorFile").hasRole("MENTOR")
+//
+//                                // All other requests not need authentication
+//                        .anyRequest().permitAll()
+//                )
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless sessions
+//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT filter before UsernamePasswordAuthenticationFilter
+//                .build();
+//    }
+
+    // convert plain text password into Bcryptpassword
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+
+
+    // step 4
+    @Bean
+    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        //return authenticationConfiguration.getAuthenticationManager();
+        return new ProviderManager(authenticationProvider());
+    }
+
+
+    @Autowired
+    private UserDetailsServiceImpl userDetailsServiceImpl;
+
+
+    // step 5
+    @Bean
+    AuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider daoAuthenticationProvider=new DaoAuthenticationProvider();
+
+        // this line is searching the row based on username or useremail in db
+
+        // here setUserDetailsService this require UserDetailsService return type
+        daoAuthenticationProvider.setUserDetailsService(userDetailsServiceImpl);
+
+        // this line is taking password which we enter during login and encode that password
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        return daoAuthenticationProvider;
+
+    }
+
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.setAllowedOrigins(List.of(
+                "http://localhost:3001",
+                "http://localhost:3000",
+                "http://43.204.42.69:9049",
+                "http://localhost:8888",
+                "http://localhost"
+        ));
+        corsConfiguration.addAllowedMethod("*");  // Allow all HTTP methods (GET, POST, etc.)
+        corsConfiguration.addAllowedHeader("*");  // Allow all headers
+        corsConfiguration.setMaxAge(3600L);  // Cache the CORS configuration for 3600 seconds
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        return source;
+    }
+
+}
